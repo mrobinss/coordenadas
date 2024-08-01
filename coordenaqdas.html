@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Coordenadas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #4e75af;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #e9e9e9;
+        }
+        .container {
+            background: #51609481;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px #270303;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 10px;
+        }
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-size: 18px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+        .tab-button.active {
+            color: #ffffff;
+            border-bottom: 2px solid #ffffff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #ffffff;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #2e245a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #041027;
+        }
+        .reset-button {
+            background-color: #2e245a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .reset-button:hover {
+            background-color: #041027;
+        }
+        p {
+            font-size: 16px;
+            color: #ffffff;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversor de Coordenadas</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('polar-to-rectangular')">Polares a Rectangulares</button>
+            <button class="tab-button" onclick="showTab('rectangular-to-polar')">Rectangulares a Polares</button>
+        </div>
+
+        <div id="polar-to-rectangular" class="tab-content active">
+            <h2>Polares a Rectangulares</h2>
+            <label for="polar-r">Radio (r):</label>
+            <input type="number" id="polar-r" step="any" placeholder="Ingrese el radio">
+            <label for="polar-theta">Ángulo (θ) en grados:</label>
+            <input type="number" id="polar-theta" step="any" placeholder="Ingrese el ángulo">
+            <button onclick="convertPolarToRectangular()">Convertir a Rectangulares</button>
+            <button class="reset-button" onclick="resetPolarToRectangular()">Reiniciar</button>
+            <p id="polar-result"></p>
+        </div>
+
+        <div id="rectangular-to-polar" class="tab-content">
+            <h2>Rectangulares a Polares</h2>
+            <label for="rect-x">X:</label>
+            <input type="number" id="rect-x" step="any" placeholder="Ingrese el valor de X">
+            <label for="rect-y">Y:</label>
+            <input type="number" id="rect-y" step="any" placeholder="Ingrese el valor de Y">
+            <button onclick="convertRectangularToPolar()">Convertir a Polares</button>
+            <button class="reset-button" onclick="resetRectangularToPolar()">Reiniciar</button>
+            <p id="rect-result"></p>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Ocultar todas las pestañas
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+
+            // Desactivar todos los botones
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Mostrar la pestaña seleccionada
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+        function convertPolarToRectangular() {
+            const r = parseFloat(document.getElementById('polar-r').value);
+            const theta = parseFloat(document.getElementById('polar-theta').value);
+
+            if (isNaN(r) || isNaN(theta)) {
+                document.getElementById('polar-result').innerText = 'Por favor, ingrese valores válidos.';
+                return;
+            }
+
+            // Convertir ángulo de grados a radianes
+            const thetaRad = theta * (Math.PI / 180);
+
+            // Conversión
+            const x = r * Math.cos(thetaRad);
+            const y = r * Math.sin(thetaRad);
+
+            document.getElementById('polar-result').innerText = `Coordenadas Rectangulares: X = ${x.toFixed(2)}, Y = ${y.toFixed(2)}`;
+        }
+
+        function convertRectangularToPolar() {
+            const x = parseFloat(document.getElementById('rect-x').value);
+            const y = parseFloat(document.getElementById('rect-y').value);
+
+            if (isNaN(x) || isNaN(y)) {
+                document.getElementById('rect-result').innerText = 'Por favor, ingrese valores válidos.';
+                return;
+            }
+
+            // Conversión
+            const r = Math.sqrt(x * x + y * y);
+            const thetaRad = Math.atan2(y, x);
+            const theta = thetaRad * (180 / Math.PI);
+
+            document.getElementById('rect-result').innerText = `Coordenadas Polares: R = ${r.toFixed(2)}, θ = ${theta.toFixed(2)} grados`;
+        }
+
+        function resetPolarToRectangular() {
+            document.getElementById('polar-r').value = '';
+            document.getElementById('polar-theta').value = '';
+            document.getElementById('polar-result').innerText = '';
+        }
+
+        function resetRectangularToPolar() {
+            document.getElementById('rect-x').value = '';
+            document.getElementById('rect-y').value = '';
+            document.getElementById('rect-result').innerText = '';
+        }
+    </script>
+</body>
+</html>
